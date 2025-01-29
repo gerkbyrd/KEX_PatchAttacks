@@ -164,7 +164,7 @@ def train(args):
             patience=0
             best=ep_loss
             im = transforms.ToPILImage('RGB')(adv_patch_cpu)
-            im.save(args.savedir + '/universal_patch_{}_hs'.format(args.patch_size) +'.png')
+            im.save(args.savedir + '/universal_patch'.format(args.patch_size) +'.png')
         else:
             patience=patience+1
         del adv_batch_t, output, max_prob, det_loss, p_img_batch, nps_loss, tv_loss, loss
