@@ -57,7 +57,7 @@ patch_folder_creator_ic.py --imgdir data/imagenet/clean/ --dataset imagenet --n_
 
 Note that in all examples, the area of the single patch attack is maintained when using multiple patches, that is, multiple patches are smaller to ensure that the attacked area is the same.
 
-## EXAMPLE COMMANDS - TRAIN PATCHES (TO DO)
+## EXAMPLE COMMANDS - TRAIN PATCHES
 
 Here are some examples on how to train a patch from scratch. For the following examples commands, the clean images the train patch will attack are located at the folder specified using "--imgdir FOLDER", the labels indicating objects detected in the clean images by the victim model are at the folder specified using "--labdir FOLDER". The trained patch will be saved at "FOLDER/universal_patch.png" specified provided using "--savedir FOLDER/". 
 
