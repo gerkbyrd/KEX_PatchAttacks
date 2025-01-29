@@ -31,11 +31,14 @@ class MaxProbExtractor(nn.Module):
 
     """
 
-    def __init__(self, cls_id, num_cls, config):
+    def __init__(self, cls_id, num_cls, config=None, loss_target=None):
         super(MaxProbExtractor, self).__init__()
         self.cls_id = cls_id
         self.num_cls = num_cls
-        self.config = config
+        if config is None:
+            self.loss_target=loss_target
+        else:
+            self.loss_target= config.loss_target
 
     def forward(self, YOLOoutput):
         # get values neccesary for transformation
@@ -57,7 +60,7 @@ class MaxProbExtractor(nn.Module):
         confs_for_class = normal_confs[:, self.cls_id, :]
         confs_if_object = output_objectness #confs_for_class * output_objectness
         confs_if_object = confs_for_class * output_objectness
-        confs_if_object = self.config.loss_target(output_objectness, confs_for_class)
+        confs_if_object = self.loss_target(output_objectness, confs_for_class)
         # find the max probability for person
         max_conf, max_conf_idx = torch.max(confs_if_object, dim=1)
 
