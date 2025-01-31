@@ -263,7 +263,7 @@ def plot_boxes_cv2(img, boxes, savename=None, class_names=None, color=None):
         cv2.imwrite(savename, img)
     return img
 
-def plot_boxes(img, boxes, savename=None, class_names=None):
+def plot_boxes(img, boxes, savename=None, class_names=None, doconv=True,fontsize=35):
     colors = torch.FloatTensor([[1,0,1],[0,0,1],[0,1,1],[0,1,0],[1,1,0],[1,0,0]]);
     def get_color(c, x, max_val):
         ratio = float(x)/max_val * 5
@@ -272,21 +272,26 @@ def plot_boxes(img, boxes, savename=None, class_names=None):
         ratio = ratio - i
         r = (1-ratio) * colors[i][c] + ratio*colors[j][c]
         return int(r*255)
-
+    #for box in boxes:
+    #    print([box[i] for i in range(4)])
+    #input()
     width = img.width
     height = img.height
     draw = ImageDraw.Draw(img)
+
     for i in range(len(boxes)):
         box = boxes[i]
-        x1 = (box[0] - box[2]/2.0) * width
-        y1 = (box[1] - box[3]/2.0) * height
-        x2 = (box[0] + box[2]/2.0) * width
-        y2 = (box[1] + box[3]/2.0) * height
-
+        if doconv:
+            x1 = (box[0] - box[2]/2.0) * width
+            y1 = (box[1] - box[3]/2.0) * height
+            x2 = (box[0] + box[2]/2.0) * width
+            y2 = (box[1] + box[3]/2.0) * height
+        else:
+            x1,y1,x2,y2=width*box[0], height*box[1], width*box[2], height*box[3]
         rgb = (255, 0, 0)
         if len(box) >= 7 and class_names:
             cls_conf = box[5]
-            cls_id = box[6]
+            cls_id = int(box[6])
             print('[%i]%s: %f' % (cls_id, class_names[cls_id], cls_conf))
             classes = len(class_names)
             offset = cls_id * 123457 % classes
@@ -294,12 +299,26 @@ def plot_boxes(img, boxes, savename=None, class_names=None):
             green = get_color(1, offset, classes)
             blue  = get_color(0, offset, classes)
             rgb = (red, green, blue)
-            draw.text((x1, y1), class_names[cls_id], fill=rgb)
+            cords=(x1,y1)#((x1+x2)/2, (y1+y2)/2)
+            anch='lb'
+            namer=class_names[cls_id]
+            #print(namer)
+            #input(namer in ['dog', 'car'])
+            if True:#namer in ['dog', 'car']:
+                textcol=(0,0,0)
+            else:
+                textcol=(255,255,255)
+            tangs=draw.textbbox(cords, namer, font_size=fontsize, anchor=anch)
+            tangs=[tangs[0]-2, tangs[1]-2, tangs[2]+2, tangs[3]+2]
+            draw.rectangle(tangs, fill=rgb, outline = (0,0,0))
+            draw.text(cords, namer, fill=textcol, font_size=fontsize, anchor=anch)
         draw.rectangle([x1, y1, x2, y2], outline = rgb)
+
     if savename:
+        #input(savename)
         print("save plot results to %s" % savename)
-        img=img.resize((1024,1024))
-        img.save(savename)
+        #img=img.resize((1024,1024))
+        img.save(savename, quality=95)
     return img
 
 def read_truths(lab_path):
