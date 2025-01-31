@@ -67,3 +67,27 @@ python train_patch.py --patience 100 --imgdir data/inria/clean --labdir data/inr
 ```
 
 This should yield a patch similar to the one in "testing/test_patch.png".
+
+
+## EXAMPLE COMMANDS - DEFENSE, EVALUATION, AND VISUALIZATION
+
+Here are some examples on how evaluate the effectiveness of patch attacks and defenses (this code is built around the NutNet defense). For the following example commands, the clean images are located at the folder specified using "--imgdir FOLDER", and their attacked versions (with the same names) at the folder specified using "--patch_imgdir FOLDER". Visualziations of the obejct detection results can be saved in the folder specified by using "--savedir FOLDER/" and the flag "--visualize". See the "nutnet_results" folder for some examples of visualization. The "--clean" flag indicates that the code will run only on clean images (this is equivalent to using the clean image folder in both "--imgdir" and "--patch_imgdir"), and the "--bypass" flag indicates that the NutNet defense should be bypassed, thus evaluating the undefended model. The script will output "Recovered/unsuccessful attacks" and "successful attacks": the former refer to the proportion of cases where the patch attack was not effective or properly defended, and the latter to the proportion of cases where the patches were effective and defeated NutNet (the last part is only true if the evaluation does not use the "--bypass" flag). 
+
+IMPORTANT: THIS CODE IS FOCUSED ON OBJ. DETECTION, THUS ONLY INRIA AND VOC SHOULD BE USED.
+
+To get results of the victim model on clean images of the INRIA dataset with visualizations (saved to undefended_clean/):
+```
+python nutnet.py --imgdir data/inria/clean --patch_imgdir data/inria/1p/ --bypass --visualize --clean --savedir undefended_clean/
+```
+This should yield results like the ones in "nutnet_results/".
+
+To get results of the undefended victim model on images of the INRIA dataset with single-patch attacks with visualizations (saved to undefended_1p/):
+```
+python nutnet.py --imgdir data/inria/clean --patch_imgdir data/inria/1p/ --bypass --visualize --savedir undefended_1p/
+```
+
+To get results of the victim model defended by NutNet on images of the INRIA dataset with single-patch attacks with visualizations (saved to nutnet_1p/):
+```
+python nutnet.py --imgdir data/inria/clean --patch_imgdir data/inria/1p/ --visualize --savedir nutnet_1p/
+```
+
